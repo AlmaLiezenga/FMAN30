@@ -1,23 +1,17 @@
 function [Rstar, tstar] = procrustes(sample_he, sample_pe)
 
-[x, y] = deal(0);
-x(1) = sum(sample_he(1,:));
-x(2) = sum(sample_he(2,:));
-y(1) = sum(sample_pe(1,:));
-y(2) = sum(sample_pe(2,:));
-               
 %find Rstar and tstar for those points 
-xbar = x./n; %vector of two values
-ybar = y./n; %vector of two values
+bar_he = sum(sample_he, 2)./length(sample_he); %vector of two values
+bar_pe = sum(sample_pe, 2)./length(sample_pe); %vector of two values
                 
-xtilde = transpose(sample_x) - xbar;
-ytilde = transpose(sample_y) - ybar; 
+tilde_he = sample_he - bar_he;
+tilde_pe = sample_pe - bar_pe; 
                 
-H = ytilde*(xtilde'); 
+H = tilde_pe*(tilde_he'); 
 [U,~,V] = svd(H); 
 
 %calculate Rstar and tstar
-Rstar = U.*diag([1, det(U.*V')]).*V'; 
-tstar = ybar - Rstar.*xbar;
+Rstar = U*diag([1, det(U*V')])*V'; 
+tstar = (bar_pe - Rstar*bar_he);
 
 end 
